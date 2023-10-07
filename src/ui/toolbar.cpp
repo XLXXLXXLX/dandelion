@@ -16,6 +16,7 @@
 #include <spdlog/spdlog.h>
 
 #include "Eigen/src/Core/Matrix.h"
+#include "Eigen/src/Geometry/Quaternion.h"
 #include "settings.h"
 #include "../scene/camera.h"
 #include "../scene/object.h"
@@ -145,23 +146,13 @@ void Toolbar::material_editor(GL::Material& material)
 }
 
 // changes {
-Eigen::Vector4f MyAngleAxisf(float radian_angle, Vector3f axis)
+Eigen::Quaternionf MyAngleAxisf(float radian_angle, Vector3f axis)
 {
-    Eigen::Vector4f q;
-
-    // 将旋转角度转换为弧度
-    // 计算旋转轴的长度
     double axisLength = axis.norm();
-
-    // 将旋转轴标准化为单位向量
     axis /= axisLength;
-
-    // 计算四元数的实部和虚部
-    q(0)                = std::cos(radian_angle);
-    double sinHalfAngle = std::sin(radian_angle);
-    q(1)                = axis(0) * sinHalfAngle;
-    q(2)                = axis(1) * sinHalfAngle;
-    q(3)                = axis(2) * sinHalfAngle;
+    Eigen::Quaternionf q(
+        1.0f * std::cos(radian_angle / 2.0f), axis(0) * std::sin(radian_angle / 2.0f),
+        axis(1) * std::sin(radian_angle / 2.0f), axis(2) * std::sin(radian_angle / 2.0f));
     return q;
 }
 //}

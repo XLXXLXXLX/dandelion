@@ -76,9 +76,9 @@ private:
     unsigned int gl_rendered_texture;
 };
 
-// changes {
-Eigen::Vector4f MyAngleAxisf(float radian_angle, Eigen::Vector3f axis);
-//}
+// // changes {
+// Eigen::Vector4f MyAngleAxisf(float radian_angle, Eigen::Vector3f axis);
+// //}
 
 } // namespace UI
 

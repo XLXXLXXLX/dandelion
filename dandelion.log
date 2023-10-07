@@ -1,0 +1,21 @@
+[Default] [info] Dandelion 3D, started at 2023-10-07 12:10:53+0800
+[Platform] [debug] Try to create OpenGL context 4.6
+[Platform] [info] runtime OpenGL context: 4.6 (Core Profile) Mesa 23.1.8-manjaro1.1
+[Platform] [info] Physical screen size: 286x179 mm, diagonal: 13.28 in
+[Platform] [info] screen DPI: 149.14, scale factor: 1.5
+[Platform] [info] The loaded vertex shader: resources/shaders/vertex.glsl
+[Platform] [info] The loaded fragment shader: resources/shaders/fragment.glsl
+[Platform] [debug] Vertex shader 1 compiled successfully.
+[Platform] [debug] Fragment shader 2 compiled successfully.
+[Platform] [info] Shader program 3 link succeeded
+[cow (Group ID: 0)] [info] file /home/xlx/CG/dandelion-1.0.2/dandelion-testset/cow.dae loaded
+[cow (Group ID: 0)] [info] 1 mesh(es) in total
+[cow (Group ID: 0)] [info] load into group "cow"
+[cow (Group ID: 0)] [info] the 1-th mesh has 5856 faces
+[cow (Group ID: 0)] [info] load mesh (object) Cow
+[cow (Group ID: 0)] [info] summary: 2930 vertices, 8784 edges, 5856 faces
+[cow (Group ID: 0)] [info] The BVH structure of Cow (ID: 0) has 11711 boxes
+[Scene] [debug] group "cow" has beed added into the current scene
+[Controller] [debug] object Cow (ID: 0) is picked
+[Platform] [info] ImGui shutdown
+[Platform] [info] GLFW shutdown

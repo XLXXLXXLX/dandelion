@@ -43,3 +43,7 @@ deps/dandelion-*.lib
 
 # For Doxygen ------------------------------------
 docs/build/
+
+# For Submission ---------------------------------
+src.zip
+modifications.cpp

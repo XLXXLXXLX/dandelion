@@ -43,14 +43,3 @@ deps/dandelion-*.lib
 
 # For Doxygen ------------------------------------
 docs/build/
-
-# For Submission ---------------------------------
-src.zip
-modifications.cpp
-
-# For imgui --------------------------------------
-imgui.ini
-
-# For dandelion ----------------------------------
-dandelion.log
-dandelion-testset

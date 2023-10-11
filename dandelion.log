@@ -1,6 +1,6 @@
-[Default] [info] Dandelion 3D, started at 2023-10-07 12:10:53+0800
+[Default] [info] Dandelion 3D, started at 2023-10-11 14:45:50+0800
 [Platform] [debug] Try to create OpenGL context 4.6
-[Platform] [info] runtime OpenGL context: 4.6 (Core Profile) Mesa 23.1.8-manjaro1.1
+[Platform] [info] runtime OpenGL context: 4.6 (Core Profile) Mesa 23.1.9-manjaro1.1
 [Platform] [info] Physical screen size: 286x179 mm, diagonal: 13.28 in
 [Platform] [info] screen DPI: 149.14, scale factor: 1.5
 [Platform] [info] The loaded vertex shader: resources/shaders/vertex.glsl
@@ -8,7 +8,7 @@
 [Platform] [debug] Vertex shader 1 compiled successfully.
 [Platform] [debug] Fragment shader 2 compiled successfully.
 [Platform] [info] Shader program 3 link succeeded
-[cow (Group ID: 0)] [info] file /home/xlx/CG/dandelion-1.0.2/dandelion-testset/cow.dae loaded
+[cow (Group ID: 0)] [info] file /home/xlx/CG/dandelion/dandelion-testset/cow.dae loaded
 [cow (Group ID: 0)] [info] 1 mesh(es) in total
 [cow (Group ID: 0)] [info] load into group "cow"
 [cow (Group ID: 0)] [info] the 1-th mesh has 5856 faces
@@ -17,5 +17,334 @@
 [cow (Group ID: 0)] [info] The BVH structure of Cow (ID: 0) has 11711 boxes
 [Scene] [debug] group "cow" has beed added into the current scene
 [Controller] [debug] object Cow (ID: 0) is picked
+[Scene] [debug] construct a halfedge mesh for object Cow
+[Halfedge Mesh] [debug] vertices are recorded
+[Halfedge Mesh] [debug] faces are recorded
+[Halfedge Mesh] [debug] halfedges' basic connectivity are built
+[Halfedge Mesh] [debug] virtual faces representing boundary loops are created
+[Halfedge Mesh] [debug] all vertices are manifold
+[Halfedge Mesh] [debug] the line set is initialized
+[Halfedge Mesh] [debug] validation passed
+[Halfedge Mesh] [debug] done
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 3721 with barycentric coordinates (0.634, 0.008, 0.357)
+[Controller] [debug] try to select edge 31773
+[Halfedge Mesh] [info] synchronize halfedge mesh to object Cow (ID: 0)
+[Halfedge Mesh] [debug] vertex data is synchronized
+[Halfedge Mesh] [debug] edge data is synchronized
+[Halfedge Mesh] [debug] face data is synchronized
+[Halfedge Mesh] [debug] all data is synchronized, the object's dirty flag is set
+[Halfedge Mesh] [debug] halfedge arrows are regenerated
+[Halfedge Mesh] [info] synchronization done
+[Halfedge Mesh] [info] 
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 773 with barycentric coordinates (0.328, 0.671, 0.001)
+[Controller] [debug] try to select edge 17692
+[Halfedge Mesh] [info] synchronize halfedge mesh to object Cow (ID: 0)
+[Halfedge Mesh] [debug] vertex data is synchronized
+[Halfedge Mesh] [debug] edge data is synchronized
+[Halfedge Mesh] [debug] face data is synchronized
+[Halfedge Mesh] [debug] all data is synchronized, the object's dirty flag is set
+[Halfedge Mesh] [debug] halfedge arrows are regenerated
+[Halfedge Mesh] [info] synchronization done
+[Halfedge Mesh] [info] 
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 2264 with barycentric coordinates (0.736, 0.253, 0.012)
+[Controller] [debug] try to select edge 17795
+[Halfedge Mesh] [info] synchronize halfedge mesh to object Cow (ID: 0)
+[Halfedge Mesh] [debug] vertex data is synchronized
+[Halfedge Mesh] [debug] edge data is synchronized
+[Halfedge Mesh] [debug] face data is synchronized
+[Halfedge Mesh] [debug] all data is synchronized, the object's dirty flag is set
+[Halfedge Mesh] [debug] halfedge arrows are regenerated
+[Halfedge Mesh] [info] synchronization done
+[Halfedge Mesh] [info] 
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 5164 with barycentric coordinates (0.671, 0.328, 0.001)
+[Controller] [debug] try to select edge 31632
+[Halfedge Mesh] [info] synchronize halfedge mesh to object Cow (ID: 0)
+[Halfedge Mesh] [debug] vertex data is synchronized
+[Halfedge Mesh] [debug] edge data is synchronized
+[Halfedge Mesh] [debug] face data is synchronized
+[Halfedge Mesh] [debug] all data is synchronized, the object's dirty flag is set
+[Halfedge Mesh] [debug] halfedge arrows are regenerated
+[Halfedge Mesh] [info] synchronization done
+[Halfedge Mesh] [info] 
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 779 with barycentric coordinates (0.841, 0.056, 0.102)
+[Controller] [debug] try to select halfedge 11865
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 779 with barycentric coordinates (0.191, 0.790, 0.020)
+[Controller] [debug] try to select edge 17731
+[Halfedge Mesh] [info] synchronize halfedge mesh to object Cow (ID: 0)
+[Halfedge Mesh] [debug] vertex data is synchronized
+[Halfedge Mesh] [debug] edge data is synchronized
+[Halfedge Mesh] [debug] face data is synchronized
+[Halfedge Mesh] [debug] all data is synchronized, the object's dirty flag is set
+[Halfedge Mesh] [debug] halfedge arrows are regenerated
+[Halfedge Mesh] [info] synchronization done
+[Halfedge Mesh] [info] 
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 2254 with barycentric coordinates (0.539, 0.450, 0.011)
+[Controller] [debug] try to select edge 17753
+[Halfedge Mesh] [info] synchronize halfedge mesh to object Cow (ID: 0)
+[Halfedge Mesh] [debug] vertex data is synchronized
+[Halfedge Mesh] [debug] edge data is synchronized
+[Halfedge Mesh] [debug] face data is synchronized
+[Halfedge Mesh] [debug] all data is synchronized, the object's dirty flag is set
+[Halfedge Mesh] [debug] halfedge arrows are regenerated
+[Halfedge Mesh] [info] synchronization done
+[Halfedge Mesh] [info] 
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 5176 with barycentric coordinates (0.020, 0.566, 0.414)
+[Controller] [debug] try to select edge 31687
+[Halfedge Mesh] [info] synchronize halfedge mesh to object Cow (ID: 0)
+[Halfedge Mesh] [debug] vertex data is synchronized
+[Halfedge Mesh] [debug] edge data is synchronized
+[Halfedge Mesh] [debug] face data is synchronized
+[Halfedge Mesh] [debug] all data is synchronized, the object's dirty flag is set
+[Halfedge Mesh] [debug] halfedge arrows are regenerated
+[Halfedge Mesh] [info] synchronization done
+[Halfedge Mesh] [info] 
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 3717 with barycentric coordinates (0.412, 0.565, 0.024)
+[Controller] [debug] try to select edge 31712
+[Halfedge Mesh] [info] synchronize halfedge mesh to object Cow (ID: 0)
+[Halfedge Mesh] [debug] vertex data is synchronized
+[Halfedge Mesh] [debug] edge data is synchronized
+[Halfedge Mesh] [debug] face data is synchronized
+[Halfedge Mesh] [debug] all data is synchronized, the object's dirty flag is set
+[Halfedge Mesh] [debug] halfedge arrows are regenerated
+[Halfedge Mesh] [info] synchronization done
+[Halfedge Mesh] [info] 
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 5501 with barycentric coordinates (0.019, 0.515, 0.466)
+[Controller] [debug] try to select edge 33327
+[Halfedge Mesh] [info] synchronize halfedge mesh to object Cow (ID: 0)
+[Halfedge Mesh] [debug] vertex data is synchronized
+[Halfedge Mesh] [debug] edge data is synchronized
+[Halfedge Mesh] [debug] face data is synchronized
+[Halfedge Mesh] [debug] all data is synchronized, the object's dirty flag is set
+[Halfedge Mesh] [debug] halfedge arrows are regenerated
+[Halfedge Mesh] [info] synchronization done
+[Halfedge Mesh] [info] 
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 5305 with barycentric coordinates (0.013, 0.610, 0.377)
+[Controller] [debug] try to select edge 32349
+[Halfedge Mesh] [info] synchronize halfedge mesh to object Cow (ID: 0)
+[Halfedge Mesh] [debug] vertex data is synchronized
+[Halfedge Mesh] [debug] edge data is synchronized
+[Halfedge Mesh] [debug] face data is synchronized
+[Halfedge Mesh] [debug] all data is synchronized, the object's dirty flag is set
+[Halfedge Mesh] [debug] halfedge arrows are regenerated
+[Halfedge Mesh] [info] synchronization done
+[Halfedge Mesh] [info] 
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 2574 with barycentric coordinates (0.031, 0.492, 0.477)
+[Controller] [debug] try to select edge 19046
+[Halfedge Mesh] [info] synchronize halfedge mesh to object Cow (ID: 0)
+[Halfedge Mesh] [debug] vertex data is synchronized
+[Halfedge Mesh] [debug] edge data is synchronized
+[Halfedge Mesh] [debug] face data is synchronized
+[Halfedge Mesh] [debug] all data is synchronized, the object's dirty flag is set
+[Halfedge Mesh] [debug] halfedge arrows are regenerated
+[Halfedge Mesh] [info] synchronization done
+[Halfedge Mesh] [info] 
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 907 with barycentric coordinates (0.503, 0.489, 0.007)
+[Controller] [debug] try to select edge 18260
+[Halfedge Mesh] [info] synchronize halfedge mesh to object Cow (ID: 0)
+[Halfedge Mesh] [debug] vertex data is synchronized
+[Halfedge Mesh] [debug] edge data is synchronized
+[Halfedge Mesh] [debug] face data is synchronized
+[Halfedge Mesh] [debug] all data is synchronized, the object's dirty flag is set
+[Halfedge Mesh] [debug] halfedge arrows are regenerated
+[Halfedge Mesh] [info] synchronization done
+[Halfedge Mesh] [info] 
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 2569 with barycentric coordinates (0.107, 0.375, 0.518)
+[Controller] [debug] try to select face 5499
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 1107 with barycentric coordinates (0.518, 0.465, 0.017)
+[Controller] [debug] try to select edge 19026
+[Halfedge Mesh] [info] synchronize halfedge mesh to object Cow (ID: 0)
+[Halfedge Mesh] [debug] vertex data is synchronized
+[Halfedge Mesh] [debug] edge data is synchronized
+[Halfedge Mesh] [debug] face data is synchronized
+[Halfedge Mesh] [debug] all data is synchronized, the object's dirty flag is set
+[Halfedge Mesh] [debug] halfedge arrows are regenerated
+[Halfedge Mesh] [info] synchronization done
+[Halfedge Mesh] [info] 
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 2367 with barycentric coordinates (0.003, 0.467, 0.530)
+[Controller] [debug] try to select edge 18217
+[Halfedge Mesh] [info] synchronize halfedge mesh to object Cow (ID: 0)
+[Halfedge Mesh] [debug] vertex data is synchronized
+[Halfedge Mesh] [debug] edge data is synchronized
+[Halfedge Mesh] [debug] face data is synchronized
+[Halfedge Mesh] [debug] all data is synchronized, the object's dirty flag is set
+[Halfedge Mesh] [debug] halfedge arrows are regenerated
+[Halfedge Mesh] [info] synchronization done
+[Halfedge Mesh] [info] 
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 5496 with barycentric coordinates (0.861, 0.131, 0.008)
+[Controller] [debug] try to select edge 33306
+[Halfedge Mesh] [info] synchronize halfedge mesh to object Cow (ID: 0)
+[Halfedge Mesh] [debug] vertex data is synchronized
+[Halfedge Mesh] [debug] edge data is synchronized
+[Halfedge Mesh] [debug] face data is synchronized
+[Halfedge Mesh] [debug] all data is synchronized, the object's dirty flag is set
+[Halfedge Mesh] [debug] halfedge arrows are regenerated
+[Halfedge Mesh] [info] synchronization done
+[Halfedge Mesh] [info] 
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 5293 with barycentric coordinates (0.047, 0.270, 0.683)
+[Controller] [debug] try to select edge 32287
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 5293 with barycentric coordinates (0.065, 0.911, 0.024)
+[Controller] [debug] try to select vertex 2694
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 5293 with barycentric coordinates (0.065, 0.911, 0.024)
+[Controller] [debug] try to select vertex 2694
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 3829 with barycentric coordinates (0.012, 0.923, 0.065)
+[Controller] [debug] try to select vertex 2694
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 5293 with barycentric coordinates (0.075, 0.907, 0.017)
+[Controller] [debug] try to select vertex 2694
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 5293 with barycentric coordinates (0.095, 0.901, 0.004)
+[Controller] [debug] try to select vertex 2694
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 3829 with barycentric coordinates (0.005, 0.856, 0.139)
+[Controller] [debug] try to select edge 32291
+[Halfedge Mesh] [info] synchronize halfedge mesh to object Cow (ID: 0)
+[Halfedge Mesh] [debug] vertex data is synchronized
+[Halfedge Mesh] [debug] edge data is synchronized
+[Halfedge Mesh] [debug] face data is synchronized
+[Halfedge Mesh] [debug] all data is synchronized, the object's dirty flag is set
+[Halfedge Mesh] [debug] halfedge arrows are regenerated
+[Halfedge Mesh] [info] synchronization done
+[Halfedge Mesh] [info] 
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 2255 with barycentric coordinates (0.246, 0.675, 0.079)
+[Controller] [debug] try to select halfedge 17757
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 2568 with barycentric coordinates (0.213, 0.342, 0.444)
+[Controller] [debug] try to select face 5498
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 3613 with barycentric coordinates (0.486, 0.289, 0.226)
+[Controller] [debug] try to select face 6543
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 2838 with barycentric coordinates (0.644, 0.339, 0.017)
+[Controller] [debug] try to select edge 34677
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 2838 with barycentric coordinates (0.644, 0.339, 0.017)
+[Controller] [debug] try to select edge 34677
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 5183 with barycentric coordinates (0.666, 0.277, 0.057)
+[Controller] [debug] try to select halfedge 31724
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 5497 with barycentric coordinates (0.527, 0.170, 0.303)
+[Controller] [debug] try to select face 8427
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 5520 with barycentric coordinates (0.244, 0.270, 0.487)
+[Controller] [debug] try to select face 8450
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 4064 with barycentric coordinates (0.046, 0.076, 0.878)
+[Controller] [debug] try to select edge 33427
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 4064 with barycentric coordinates (0.046, 0.076, 0.878)
+[Controller] [debug] try to select edge 33427
+[Halfedge Mesh] [info] synchronize halfedge mesh to object Cow (ID: 0)
+[Halfedge Mesh] [debug] vertex data is synchronized
+[Halfedge Mesh] [debug] edge data is synchronized
+[Halfedge Mesh] [debug] face data is synchronized
+[Halfedge Mesh] [debug] all data is synchronized, the object's dirty flag is set
+[Halfedge Mesh] [debug] halfedge arrows are regenerated
+[Halfedge Mesh] [info] synchronization done
+[Halfedge Mesh] [info] 
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 5520 with barycentric coordinates (0.149, 0.292, 0.558)
+[Controller] [debug] try to select face 35164
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 5520 with barycentric coordinates (0.131, 0.852, 0.017)
+[Controller] [debug] try to select edge 33427
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 5857 with barycentric coordinates (0.028, 0.136, 0.836)
+[Controller] [debug] try to select edge 35162
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 5858 with barycentric coordinates (0.489, 0.093, 0.418)
+[Controller] [debug] try to select halfedge 35157
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 5520 with barycentric coordinates (0.586, 0.395, 0.019)
+[Controller] [debug] try to select edge 33427
+[Halfedge Mesh] [info] synchronize halfedge mesh to object Cow (ID: 0)
+[Halfedge Mesh] [debug] vertex data is synchronized
+[Halfedge Mesh] [debug] edge data is synchronized
+[Halfedge Mesh] [debug] face data is synchronized
+[Halfedge Mesh] [debug] all data is synchronized, the object's dirty flag is set
+[Halfedge Mesh] [debug] halfedge arrows are regenerated
+[Halfedge Mesh] [info] synchronization done
+[Halfedge Mesh] [info] 
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 5856 with barycentric coordinates (0.027, 0.463, 0.510)
+[Controller] [debug] try to select edge 35175
+[Halfedge Mesh] [info] synchronize halfedge mesh to object Cow (ID: 0)
+[Halfedge Mesh] [debug] vertex data is synchronized
+[Halfedge Mesh] [debug] edge data is synchronized
+[Halfedge Mesh] [debug] face data is synchronized
+[Halfedge Mesh] [debug] all data is synchronized, the object's dirty flag is set
+[Halfedge Mesh] [debug] halfedge arrows are regenerated
+[Halfedge Mesh] [info] synchronization done
+[Halfedge Mesh] [info] 
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 5866 with barycentric coordinates (0.369, 0.030, 0.601)
+[Controller] [debug] try to select edge 35175
+[Halfedge Mesh] [info] synchronize halfedge mesh to object Cow (ID: 0)
+[Halfedge Mesh] [debug] vertex data is synchronized
+[Halfedge Mesh] [debug] edge data is synchronized
+[Halfedge Mesh] [debug] face data is synchronized
+[Halfedge Mesh] [debug] all data is synchronized, the object's dirty flag is set
+[Halfedge Mesh] [debug] halfedge arrows are regenerated
+[Halfedge Mesh] [info] synchronization done
+[Halfedge Mesh] [info] 
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 5860 with barycentric coordinates (0.053, 0.314, 0.632)
+[Controller] [debug] try to select halfedge 35157
+[Halfedge Mesh] [info] synchronize halfedge mesh to object Cow (ID: 0)
+[Halfedge Mesh] [debug] vertex data is synchronized
+[Halfedge Mesh] [debug] edge data is synchronized
+[Halfedge Mesh] [debug] face data is synchronized
+[Halfedge Mesh] [debug] all data is synchronized, the object's dirty flag is set
+[Halfedge Mesh] [debug] halfedge arrows are regenerated
+[Halfedge Mesh] [info] synchronization done
+[Halfedge Mesh] [info] 
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 5862 with barycentric coordinates (0.044, 0.278, 0.678)
+[Controller] [debug] try to select edge 35218
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 4064 with barycentric coordinates (0.152, 0.598, 0.250)
+[Controller] [debug] try to select face 35167
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 5857 with barycentric coordinates (0.368, 0.032, 0.600)
+[Controller] [debug] try to select edge 35161
+[Halfedge Mesh] [info] synchronize halfedge mesh to object Cow (ID: 0)
+[Halfedge Mesh] [debug] vertex data is synchronized
+[Halfedge Mesh] [debug] edge data is synchronized
+[Halfedge Mesh] [debug] face data is synchronized
+[Halfedge Mesh] [debug] all data is synchronized, the object's dirty flag is set
+[Halfedge Mesh] [debug] halfedge arrows are regenerated
+[Halfedge Mesh] [info] synchronization done
+[Halfedge Mesh] [info] 
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 2238 with barycentric coordinates (0.580, 0.133, 0.287)
+[Controller] [debug] try to select face 5168
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 2364 with barycentric coordinates (0.590, 0.061, 0.349)
+[Controller] [debug] try to select halfedge 18206
+[Controller] [debug] perform picking on object "Cow" (ID: 0)
+[Controller] [debug] hit face 2248 with barycentric coordinates (0.477, 0.131, 0.392)
+[Controller] [debug] try to select face 5178
 [Platform] [info] ImGui shutdown
 [Platform] [info] GLFW shutdown

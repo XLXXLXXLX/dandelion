@@ -32,7 +32,7 @@ ipch/
 *.VC.VC.opendb
 *.[Cc]ache
 # Visual Studio Code
-.vscode/
+# .vscode/
 # Vim
 .vim/
 *.swp

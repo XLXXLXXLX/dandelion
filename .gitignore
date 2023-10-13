@@ -47,6 +47,7 @@ docs/build/
 # For Submission ---------------------------------
 src.zip
 modifications.cpp
+screenshots.zip
 
 # For imgui --------------------------------------
 imgui.ini

@@ -18,7 +18,15 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "dandelion",
+            "name": "dandelion_debug",
+            "program": "${workspaceFolder}/build/dandelion",
+            "args": [],
+            "preLaunchTask": "build_dandelion_debug",
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "dandelion_release",
             "program": "${workspaceFolder}/build/dandelion",
             "args": [],
             "preLaunchTask": "build_dandelion_release",

@@ -414,55 +414,60 @@ void HalfedgeMesh::isotropic_remesh()
         vector<Edge*> save_add_edges;
         for (auto pe = selected_edges.begin(); pe != selected_edges.end(); ++pe) {
             // 分开长边
-            logger->info("split?:{}", (*pe)->length());
-            if (((*pe)->length() > up_lim)) {
+            auto& e = (*pe);
+            logger->info("split?:{}", e->length());
+            if ((e->length() > up_lim)) {
                 logger->info("spliting...");
-                auto vn = split_edge(*pe).value_or(nullptr);
+                auto vn = split_edge(e).value();
                 auto e1 = vn->halfedge->edge;
                 auto e2 = vn->halfedge->prev->edge;
                 auto e3 = vn->halfedge->prev->inv->next->edge;
                 auto e4 = vn->halfedge->inv->next->edge;
-                save_delete_edges.push_back(*pe);
+                save_delete_edges.push_back(e);
                 save_add_edges.push_back(e1);
                 save_add_edges.push_back(e2);
                 save_add_edges.push_back(e3);
                 save_add_edges.push_back(e4);
             }
         }
-        for (auto pe : save_add_edges) {
+        for (auto pe : save_delete_edges) {
             selected_edges.erase(pe);
         }
-        for (auto pe : save_delete_edges) {
+        for (auto pe : save_add_edges) {
             selected_edges.insert(pe);
         }
+        save_add_edges.clear();
+        save_delete_edges.clear();
         for (auto pe = selected_edges.rbegin(); pe != selected_edges.rend(); ++pe) {
             // 摧毁短边
-            logger->info("colloapse?:{}", (*pe)->length());
-            if (((*pe)->length() < down_lim)) {
-                auto hinv1 = (*pe)->halfedge->next;
-                auto hinv2 = (*pe)->halfedge->inv->next;
-                auto e14   = hinv1->edge;
-                auto e42   = (*pe)->halfedge->prev->edge;
-                auto e23   = hinv2->edge;
-                auto e31   = (*pe)->halfedge->inv->prev->edge;
-                save_delete_edges.push_back(*pe);
-                save_delete_edges.push_back(e14);
-                save_delete_edges.push_back(e42);
-                save_delete_edges.push_back(e23);
-                save_delete_edges.push_back(e31);
+            // break;
+            auto& e = (*pe);
+            logger->info("colloapse?:{}", e->length());
+            if ((e->length() < down_lim)) {
+                // auto hinv1 = e->halfedge->next;
+                // auto hinv2 = e->halfedge->inv->next;
+                // auto e14   = hinv1->edge;
+                // auto e42   = e->halfedge->prev->edge;
+                // auto e23   = hinv2->edge;
+                // auto e31   = e->halfedge->inv->prev->edge;
+                // save_delete_edges.push_back(e);
+                // save_delete_edges.push_back(e14);
+                // save_delete_edges.push_back(e42);
+                // save_delete_edges.push_back(e23);
+                // save_delete_edges.push_back(e31);
                 logger->info("colloapsing...");
                 collapse_edge(*pe);
-                auto e1 = hinv1->edge;
-                auto e2 = hinv2->edge;
-                save_add_edges.push_back(e1);
-                save_add_edges.push_back(e2);
+                // auto e1 = hinv1->edge;
+                // auto e2 = hinv2->edge;
+                // save_add_edges.push_back(e1);
+                // save_add_edges.push_back(e2);
             }
-        }
-        for (auto pe : save_add_edges) {
-            selected_edges.erase(pe);
         }
         for (auto pe : save_delete_edges) {
             selected_edges.erase(pe);
+        }
+        for (auto pe : save_add_edges) {
+            selected_edges.insert(pe);
         }
         save_add_edges.clear();
         save_delete_edges.clear();

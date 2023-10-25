@@ -164,7 +164,7 @@ optional<Vertex*> HalfedgeMesh::split_edge(Edge* e)
 
 optional<Vertex*> HalfedgeMesh::collapse_edge(Edge* e)
 {
-    logger->info("collapse begins");
+    logger->info("-----collapse begins-----");
     // values to be destroyed
     auto e12  = e;
     auto h12  = e->halfedge;
@@ -199,43 +199,46 @@ optional<Vertex*> HalfedgeMesh::collapse_edge(Edge* e)
     auto hfromv2 = v2->halfedge;
 
     // adjustments
-    logger->info("adjustments");
+    logger->info("-----adjustments-----");
     auto v1degree = v1->degree();
     auto v2degree = v2->degree();
-    logger->info("{} {}", v1degree, v2degree);
+    logger->info("v1's degree:{} v2's degree:{}", v1degree, v2degree);
     for (size_t i = 0; i < v1degree; i++) {
-        logger->info("hfromv1");
         hfromv1->from = vn;
         hfromv1       = hfromv1->inv->next;
+        logger->info("pulling from v1 to vn......");
     }
-    logger->info("done");
+    logger->info("v1 pulled to vn");
     for (size_t i = 0; i < v2degree; i++) {
-        logger->info("hfromv2");
         hfromv2->from = vn;
         hfromv2       = hfromv2->inv->next;
+        logger->info("pulling from v2 to vn......");
     }
-    logger->info("done");
+    logger->info("v2 pulled to vn");
     if (h12->is_boundary()) {
-        logger->info("boundary......");
+        logger->info("in boundary......");
         h12->face->halfedge = h12->next;
         vn->pos             = e->center();
         vn->halfedge        = h2;
+        v4->halfedge=v4->halfedge->inv->next;
         h2->set_neighbors(h2->next, h2->prev, hinv2, vn, e2, h2->face);
         hinv2->set_neighbors(hinv2->next, hinv2->prev, h2, hinv2->from, e2, hinv2->face);
         erase(h21), erase(h14), erase(h42);
         erase(e12), erase(ed2);
         erase(f124);
     } else if (h21->is_boundary()) {
-        logger->info("boundary......");
+        logger->info("in boundary......");
         h21->face->halfedge = h21->next;
         vn->pos             = e->center();
         vn->halfedge        = h1;
+        v3->halfedge=v3->halfedge->inv->next;
         h1->set_neighbors(h1->next, h1->prev, hinv1, vn, e1, h1->face);
         hinv1->set_neighbors(hinv1->next, hinv1->prev, h1, hinv1->from, e1, hinv1->face);
         erase(h12), erase(h23), erase(h31);
         erase(e12), erase(ed1);
         erase(f123);
     } else {
+        logger->info("not boundary......");
         h1->set_neighbors(h1->next, h1->prev, hinv1, vn, e1, h1->face);
         h2->set_neighbors(h2->next, h2->prev, hinv2, vn, e2, h2->face);
         hinv1->set_neighbors(hinv1->next, hinv1->prev, h1, hinv1->from, e1, hinv1->face);
@@ -244,14 +247,19 @@ optional<Vertex*> HalfedgeMesh::collapse_edge(Edge* e)
         e2->halfedge = h2;
         vn->pos      = (v3->pos + v4->pos) / 2;
         vn->halfedge = h1;
+        v3->halfedge=v3->halfedge->inv->next;
+        v4->halfedge=v4->halfedge->inv->next;
         // destroy values
         logger->info("destroying...");
         erase(h12), erase(h21), erase(h23), erase(h31), erase(h14), erase(h42);
         erase(ed1), erase(ed2), erase(e12);
         erase(f123), erase(f124);
+        logger->info("-----destroyed-----");
     }
     erase(v1), erase(v2);
-    logger->info("return");
+    logger->info("-----validate-----");
+    validate();
+    logger->info("-----return-----");
     return vn;
 }
 
@@ -398,7 +406,7 @@ void HalfedgeMesh::isotropic_remesh()
     // - 将比目标长度短得多的边坍缩掉。这里循环需要非常小心，因为许多边可能已经被摧毁掉了
     // - 翻转每个会增加结点度数的边
     // - 最后对节点位置作优化
-    static const size_t iteration_limit = 5;
+    static const size_t iteration_limit = 1; // 5;
     set<Edge*> selected_edges;
     double average_edge_length = 0;
     for (auto e = edges.head; e != nullptr; e = e->next_node) {
@@ -444,23 +452,23 @@ void HalfedgeMesh::isotropic_remesh()
             auto& e = (*pe);
             logger->info("colloapse?:{}", e->length());
             if ((e->length() < down_lim)) {
-                // auto hinv1 = e->halfedge->next;
-                // auto hinv2 = e->halfedge->inv->next;
-                // auto e14   = hinv1->edge;
-                // auto e42   = e->halfedge->prev->edge;
-                // auto e23   = hinv2->edge;
-                // auto e31   = e->halfedge->inv->prev->edge;
-                // save_delete_edges.push_back(e);
-                // save_delete_edges.push_back(e14);
-                // save_delete_edges.push_back(e42);
-                // save_delete_edges.push_back(e23);
-                // save_delete_edges.push_back(e31);
+                auto hinv1 = e->halfedge->next;
+                auto hinv2 = e->halfedge->inv->next;
+                auto e14   = hinv1->edge;
+                auto e42   = e->halfedge->prev->edge;
+                auto e23   = hinv2->edge;
+                auto e31   = e->halfedge->inv->prev->edge;
+                save_delete_edges.push_back(e);
+                save_delete_edges.push_back(e14);
+                save_delete_edges.push_back(e42);
+                save_delete_edges.push_back(e23);
+                save_delete_edges.push_back(e31);
                 logger->info("colloapsing...");
                 collapse_edge(*pe);
-                // auto e1 = hinv1->edge;
-                // auto e2 = hinv2->edge;
-                // save_add_edges.push_back(e1);
-                // save_add_edges.push_back(e2);
+                auto e1 = hinv1->edge;
+                auto e2 = hinv2->edge;
+                save_add_edges.push_back(e1);
+                save_add_edges.push_back(e2);
             }
         }
         for (auto pe : save_delete_edges) {
@@ -488,8 +496,9 @@ void HalfedgeMesh::isotropic_remesh()
         for (auto v = vertices.head; v != nullptr; v = v->next_node) {
             // 将节点平均化
         }
+        validate();
     }
     logger->info("remeshed mesh: {} vertices, {} faces\n", vertices.size, faces.size);
     global_inconsistent = true;
-    validate();
+    // validate();
 }

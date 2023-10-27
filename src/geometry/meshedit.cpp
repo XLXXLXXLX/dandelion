@@ -517,7 +517,7 @@ void HalfedgeMesh::isotropic_remesh()
     // - 将比目标长度短得多的边坍缩掉。这里循环需要非常小心，因为许多边可能已经被摧毁掉了
     // - 翻转每个会增加结点度数的边
     // - 最后对节点位置作优化
-    static const size_t iteration_limit = 5;
+    static const size_t iteration_limit = 1;
     set<Edge*> selected_edges;
     double average_edge_length = 0;
     for (auto e = edges.head; e != nullptr; e = e->next_node) {
@@ -528,13 +528,17 @@ void HalfedgeMesh::isotropic_remesh()
     auto up_lim   = average_edge_length * 4.0f / 3;
     auto down_lim = average_edge_length * 4.0f / 5;
     for (size_t i = 0; i != iteration_limit; ++i) {
+        logger->info("Iteration {}", i + 1);
         logger->info("...splits begins...");
         for (auto pe = selected_edges.begin(); pe != selected_edges.end(); ++pe) {
             // 分开长边
             auto& e = (*pe);
             if (erased_edges.find(e->id) != erased_edges.end()) {
-                logger->debug("e erased, not collapse");
                 selected_edges.erase(pe++);
+                logger->debug("e erased, will not collapse");
+            } else if ((!e->halfedge) || (e->halfedge->id == 0)) {
+                selected_edges.erase(pe++);
+                logger->debug("e's halfedge is nullptr, will not collapse");
             } else if ((e->length() > up_lim)) {
                 auto vn = split_edge(e).value();
                 // 将新增的四个边也加入被选中的边中（因为它们很可能过短，需要坍缩
@@ -629,7 +633,7 @@ void HalfedgeMesh::isotropic_remesh()
         for (auto v = vertices.head; v != nullptr; v = v->next_node) {
             v->pos = v->new_pos;
         }
-        logger->info("......average ends......");
+        logger->info("...average ends...");
         logger->info("---validate begins---");
         validate();
         logger->info("---validate ends---");

@@ -23,48 +23,6 @@ using std::string;
 using std::unordered_map;
 using std::vector;
 
-//{
-
-#define DeleteFuckedFaces(v)                                                                       \
-    auto degree = (v)->degree();                                                                   \
-    if (degree == 2) {                                                                             \
-        logger->info("-----validate begins-----");                                                 \
-        validate();                                                                                \
-        logger->info("-----validate ends-----");                                                   \
-        logger->debug("***degree=2***");                                                           \
-        auto hroot    = (v)->halfedge->next;                                                       \
-        auto hinvroot = (v)->halfedge->inv->prev;                                                  \
-        auto hres     = hroot->inv;                                                                \
-        auto hinvres  = hinvroot->inv;                                                             \
-        auto eres     = hroot->edge;                                                               \
-                                                                                                   \
-        eres->halfedge          = hres;                                                            \
-        hres->inv               = hinvres;                                                         \
-        hres->edge              = eres;                                                            \
-        hres->from->halfedge    = hres;                                                            \
-        hinvres->inv            = hres;                                                            \
-        hinvres->edge           = eres;                                                            \
-        hinvres->from->halfedge = hinvres;                                                         \
-                                                                                                   \
-        erase((v));                                                                                \
-        erase(hroot->next->edge);                                                                  \
-        erase(hroot->prev->edge);                                                                  \
-        erase(hinvroot->edge);                                                                     \
-        erase(hroot->face);                                                                        \
-        erase(hinvroot->face);                                                                     \
-        erase(hroot->next);                                                                        \
-        erase(hroot->prev);                                                                        \
-        erase(hroot);                                                                              \
-        erase(hinvroot->next);                                                                     \
-        erase(hinvroot->prev);                                                                     \
-        erase(hinvroot);                                                                           \
-        logger->info("-----validate begins-----");                                                 \
-        validate();                                                                                \
-        logger->info("-----validate ends-----");                                                   \
-    }
-
-//}
-
 HalfedgeMesh::EdgeRecord::EdgeRecord(unordered_map<Vertex*, Matrix4f>& vertex_quadrics, Edge* e)
     : edge(e)
 {
@@ -216,7 +174,6 @@ optional<Vertex*> HalfedgeMesh::split_edge(Edge* e)
 
 optional<Vertex*> HalfedgeMesh::collapse_edge(Edge* e)
 {
-    logger->info("-----collapse begins-----");
     // values to be destroyed
     auto e12  = e;
     auto h12  = e->halfedge;
@@ -329,12 +286,9 @@ optional<Vertex*> HalfedgeMesh::collapse_edge(Edge* e)
     if (e1->halfedge == nullptr || e2->halfedge == nullptr) {
         logger->error("halfedge is null");
     }
-    // logger->info("-----validate-----");
-    // validate();
     auto v3degree = v3->degree();
     auto v4degree = v4->degree();
     if (v3degree == 2) {
-        validate();
         logger->debug("***degree=2***");
         auto hroot    = v3->halfedge->next;
         auto hinvroot = v3->halfedge->inv->prev;
@@ -362,12 +316,8 @@ optional<Vertex*> HalfedgeMesh::collapse_edge(Edge* e)
         erase(hinvroot->prev);
         erase(hroot);
         erase(hinvroot);
-        validate();
     }
     if (v4degree == 2) {
-        logger->info("---validate begins---");
-        validate();
-        logger->info("---validate ends---");
         logger->debug("***degree=2***");
         auto hroot    = v4->halfedge->next;
         auto hinvroot = v4->halfedge->inv->prev;
@@ -395,17 +345,10 @@ optional<Vertex*> HalfedgeMesh::collapse_edge(Edge* e)
         erase(hinvroot->next);
         erase(hinvroot->prev);
         erase(hinvroot);
-        logger->info("-----validate begins-----");
-        validate();
-        logger->info("-----validate ends-----");
     }
     if (v3degree == 1 || v4degree == 1) {
         logger->critical("+++degree=1+++");
     }
-    // logger->info("-----validate begins-----");
-    // validate();
-    // logger->info("-----validate ends-----");
-    // logger->info("-----collapse return-----");
     return vn;
 }
 
@@ -552,7 +495,7 @@ void HalfedgeMesh::isotropic_remesh()
     // - 将比目标长度短得多的边坍缩掉。这里循环需要非常小心，因为许多边可能已经被摧毁掉了
     // - 翻转每个会增加结点度数的边
     // - 最后对节点位置作优化
-    static const size_t iteration_limit = 5;
+    static const size_t iteration_limit = 1;
     set<Edge*> selected_edges;
     double average_edge_length = 0;
     for (auto e = edges.head; e != nullptr; e = e->next_node) {
@@ -586,13 +529,11 @@ void HalfedgeMesh::isotropic_remesh()
         logger->info("---validate begins---");
         validate();
         logger->info("---validate ends---");
-        // int count = 0;
         logger->info("...collapses begins...");
         for (auto pe = selected_edges.begin(); pe != selected_edges.end(); ++pe) {
             // 摧毁短边
-            // count++;
             auto& e = (*pe);
-            if (erased_edges[e->id]) {
+            if (erased_edges.find(e->id) != erased_edges.end()) {
                 logger->debug("e erased, not collapse");
                 selected_edges.erase(pe++);
                 continue;
@@ -603,35 +544,16 @@ void HalfedgeMesh::isotropic_remesh()
                 logger->info("not collapse");
             }
             if (length < down_lim) {
-                logger->info("collapse");
-                // auto hinv1 = e->halfedge->next->inv;
-                // auto hinv2 = e->halfedge->inv->next->inv;
-                // auto e14   = hinv1->edge;
-                // auto e42   = e->halfedge->prev->edge;
-                // auto e23   = hinv2->edge;
-                // auto e31   = e->halfedge->inv->prev->edge;
                 logger->info("[collapse begins]");
-                collapse_edge(e);
+                collapse_edge(*pe);
                 logger->info("[collapse ends]");
-                // auto e1 = hinv1->edge;
-                // auto e2 = hinv2->edge;
-                // selected_edges.erase(e14);
-                // selected_edges.erase(e42);
-                // selected_edges.erase(e23);
-                // selected_edges.erase(e31);
                 selected_edges.erase(pe++);
-                // selected_edges.insert(e1);
-                // selected_edges.insert(e2);
-                // count++;
-                // if (count == 20) {
-                //     logger->info("-----validate begins-----");
-                //     validate();
-                //     logger->info("-----validate ends-----");
-                //     count = 0;
-                // }
             }
         }
         logger->info("...collapses ends...");
+        logger->info("---validate begins---");
+        validate();
+        logger->info("---validate ends---");
 
         // 翻转边
         logger->info("...reverse begins...");

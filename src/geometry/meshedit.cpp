@@ -1,3 +1,4 @@
+#include "Eigen/src/Core/Matrix.h"
 #include "halfedge.h"
 
 #include <cstddef>
@@ -109,8 +110,15 @@ optional<Vertex*> HalfedgeMesh::split_edge(Edge* e)
         hn1->set_neighbors(h21->next, h2n, h1n, vn, e1n, h21->face);
         h2n->set_neighbors(hn1, h21->prev, hn2, v2, e2n, h21->face);
         h21->face->halfedge = hn1;
+    } else if (h12->is_boundary()) {
+        // 不认为有可能出现两边的面都是虚假面的情况（那样不就成一条线段了啊喂！！
+        logger->debug("flip boundary");
+        h1n->set_neighbors(hn2, h12->prev, hn1, v1, e1n, h12->face);
+        hn2->set_neighbors(h12->next, h1n, h2n, vn, e2n, h12->face);
+        h12->face->halfedge = h1n;
     } else {
-        // 如果h21不在边上，则正常处理
+        // 如果不在边上，则正常处理
+        // 先不考虑有重叠面片的情况
         auto h14      = h21->next;
         auto h42      = h14->next;
         auto v4       = h42->from;
@@ -134,13 +142,7 @@ optional<Vertex*> HalfedgeMesh::split_edge(Edge* e)
         h4n->set_neighbors(hn1, h14, hn4, v4, e4n, fn14);
         h14->set_neighbors(h4n, hn1, h14->inv, v1, h14->edge, fn14);
         h42->set_neighbors(h2n, hn4, h42->inv, v4, h42->edge, fn42);
-    }
-    if (h12->is_boundary()) {
-        logger->debug("flip boundary");
-        h1n->set_neighbors(hn2, h12->prev, hn1, v1, e1n, h12->face);
-        hn2->set_neighbors(h12->next, h1n, h2n, vn, e2n, h12->face);
-        h12->face->halfedge = h1n;
-    } else {
+
         auto h23      = h12->next;
         auto h31      = h23->next;
         auto v3       = h31->from;
@@ -174,56 +176,61 @@ optional<Vertex*> HalfedgeMesh::split_edge(Edge* e)
 
 optional<Vertex*> HalfedgeMesh::collapse_edge(Edge* e)
 {
-    // values to be destroyed
-    auto e12  = e;
-    auto h12  = e->halfedge;
-    auto h21  = h12->inv;
-    auto h23  = h12->next;
-    auto h31  = h12->prev;
-    auto h14  = h21->next;
-    auto h42  = h21->prev;
-    auto v1   = h12->from;
-    auto v2   = h21->from;
+    // 变量初始化：
+    //  要摧毁的对象：
+    //      坍缩边本边
+    auto e12 = e;
+    //      坍缩三角形面的半边
+    auto h12 = e->halfedge;
+    auto h21 = h12->inv;
+    auto h23 = h12->next;
+    auto h31 = h12->prev;
+    auto h14 = h21->next;
+    auto h42 = h21->prev;
+    //      坍缩边的两个端点
+    auto v1 = h12->from;
+    auto v2 = h21->from;
+    //      坍缩三角形面
     auto f123 = h12->face;
     auto f124 = h21->face;
-    // logger->info("values to be adjusted");
-    // values to be adjusted
+    //      删去右上、左下两个边
+    auto ed1 = h23->edge;
+    auto ed2 = h14->edge;
+    //-------------------------
+    //  需要调整的对象
+    //      保留菱形外侧四个半边与新节点相连
     auto h1    = h31->inv;
     auto h2    = h42->inv;
     auto hinv1 = h23->inv;
     auto hinv2 = h14->inv;
-    auto e1    = h1->edge;
-    auto e2    = h2->edge;
-    // values to be destroyed
-    auto ed1 = hinv1->edge;
-    auto ed2 = hinv2->edge;
-    // values to be created
-    // logger->info("new_vertex");
+    //      保留左上、右下两个边与新节点相连
+    auto e1 = h1->edge;
+    auto e2 = h2->edge;
+    //      上下两个节点的连接关系需要调整
+    auto v3 = hinv1->from;
+    auto v4 = hinv2->from;
+    //-------------------------
+    //  新创建的对象
     auto vn    = new_vertex();
     vn->is_new = true;
-    // values to be used
-    auto v3      = hinv1->from;
-    auto v4      = hinv2->from;
+    //  其他对象
     auto hfromv1 = v1->halfedge;
     auto hfromv2 = v2->halfedge;
-
-    // adjustments
-    // logger->info("-----adjustments-----");
-    auto v1degree = v1->degree();
-    auto v2degree = v2->degree();
-    // logger->info("v1's degree:{} v2's degree:{}", v1degree, v2degree);
-    for (size_t i = 0; i < v1degree; i++) {
+    //=========================
+    // 调整
+    auto v1d = v1->degree();
+    auto v2d = v2->degree();
+    // 将所有原先指向v1的半边指向vn
+    for (size_t i = 0; i < v1d; i++) {
         hfromv1->from = vn;
         hfromv1       = hfromv1->inv->next;
-        // logger->info("pulling from v1 to vn......");
     }
-    // logger->info("v1 pulled to vn");
-    for (size_t i = 0; i < v2degree; i++) {
+    // 将所有原先指向v2的半边指向vn
+    for (size_t i = 0; i < v2d; i++) {
         hfromv2->from = vn;
         hfromv2       = hfromv2->inv->next;
-        // logger->info("pulling from v2 to vn......");
     }
-    // logger->info("v2 pulled to vn");
+    // 如果上三角面为虚假面
     if (h12->is_boundary()) {
         logger->info("collapse boundary");
         h12->face->halfedge = h12->next;
@@ -238,7 +245,8 @@ optional<Vertex*> HalfedgeMesh::collapse_edge(Edge* e)
         erase(e12);
         erase(ed2);
         erase(f124);
-    } else if (h21->is_boundary()) {
+    } // 如果下三角面为虚假面
+    else if (h21->is_boundary()) {
         logger->info("collapse boundary");
         h21->face->halfedge = h21->next;
         vn->pos             = e->center();
@@ -252,64 +260,82 @@ optional<Vertex*> HalfedgeMesh::collapse_edge(Edge* e)
         erase(e12);
         erase(ed1);
         erase(f123);
-    } else {
-        // logger->info("not boundary......");
-        h1->set_neighbors(h1->next, h1->prev, hinv1, vn, e1, h1->face);
-        h2->set_neighbors(h2->next, h2->prev, hinv2, vn, e2, h2->face);
-        hinv1->set_neighbors(hinv1->next, hinv1->prev, h1, hinv1->from, e1, hinv1->face);
-        hinv2->set_neighbors(hinv2->next, hinv2->prev, h2, hinv2->from, e2, hinv2->face);
+    } // 如果没在边上
+    else {
+        // 调整四个剩余半边的连接关系
+        h1->inv     = hinv1;
+        h1->edge    = e1;
+        hinv1->inv  = h1;
+        hinv1->edge = e1;
+        h2->inv     = hinv2;
+        h2->edge    = e2;
+        hinv2->inv  = h2;
+        hinv2->edge = e2;
+        // 调整两个边的连接关系
         e1->halfedge = h1;
         e2->halfedge = h2;
-        if ((!h1) || (!h2)) {
-            logger->error("halfedge is null");
-        }
-        vn->pos      = (v3->pos + v4->pos) / 2;
+        // 调整三个节点的连接关系
         vn->halfedge = h1;
-        v3->halfedge = v3->halfedge->inv->next;
-        v4->halfedge = v4->halfedge->inv->next;
-        // destroy values
-        // logger->info("destroying...");
+        v3->halfedge = hinv1;
+        v4->halfedge = hinv2;
+        // 调整vn的位置
+        vn->pos = (v3->pos + v4->pos) / 2;
+        //==================
+        // 摧毁的对象
+        //  六个内部的半边
         erase(h12);
         erase(h21);
         erase(h23);
         erase(h31);
         erase(h14);
         erase(h42);
+        //  中心边和右上、左下两个边
         erase(ed1);
         erase(ed2);
         erase(e12);
+        //  两个面
         erase(f123);
         erase(f124);
-        // logger->info("-----destroyed-----");
     }
+    // 摧毁两个端点
     erase(v1), erase(v2);
-    if (e1->halfedge == nullptr || e2->halfedge == nullptr) {
-        logger->error("halfedge is null");
-    }
+    // 特殊情况：当v3或v4原先入度为3时，进行坍缩操作会使入度变为2
+    // 这也就是说，两个三角形面片会重合起来，产生一个立起来的三角形
+    // 这里的处理方案是直接将该三角形全部摧毁并调整连接关系
     auto v3degree = v3->degree();
     auto v4degree = v4->degree();
     if (v3degree == 2) {
         logger->debug("***degree=2***");
+        // 三角形内与主体接壤的半边
         auto hroot    = v3->halfedge->next;
         auto hinvroot = v3->halfedge->inv->prev;
-        auto hres     = hroot->inv;
-        auto hinvres  = hinvroot->inv;
-        auto eres     = hroot->edge;
-
-        eres->halfedge          = hres;
-        hres->inv               = hinvres;
-        hres->edge              = eres;
+        // 主体与三角形接壤的半边
+        auto hres    = hroot->inv;
+        auto hinvres = hinvroot->inv;
+        // 与主体接壤的两个边之一，保留它并销毁另一个
+        auto eres = hroot->edge;
+        // 调整接壤的边的连接关系
+        eres->halfedge = hres;
+        // 主体的两个半边互为对应
+        hres->inv    = hinvres;
+        hinvres->inv = hres;
+        // 主体的两个半边指向接壤的边
+        hres->edge    = eres;
+        hinvres->edge = eres;
+        // 调整接壤的边的端点的连接关系
         hres->from->halfedge    = hres;
-        hinvres->inv            = hres;
-        hinvres->edge           = eres;
         hinvres->from->halfedge = hinvres;
-
+        // 删去入度为2的节点
         erase(v3);
+        // 删去三角形的两个边
         erase(hroot->next->edge);
         erase(hroot->prev->edge);
+        // 删去与主体接壤并且不被保留的边
         erase(hinvroot->edge);
+        // 删去三角形的两个面
         erase(hroot->face);
         erase(hinvroot->face);
+        // 删去三角形的六个半边
         erase(hroot->next);
         erase(hroot->prev);
         erase(hinvroot->next);
@@ -345,9 +371,6 @@ optional<Vertex*> HalfedgeMesh::collapse_edge(Edge* e)
         erase(hinvroot->next);
         erase(hinvroot->prev);
         erase(hinvroot);
-    }
-    if (v3degree == 1 || v4degree == 1) {
-        logger->critical("+++degree=1+++");
     }
     return vn;
 }
@@ -501,7 +524,6 @@ void HalfedgeMesh::isotropic_remesh()
     for (auto e = edges.head; e != nullptr; e = e->next_node) {
         selected_edges.insert(e);
         average_edge_length += e->length();
-        // logger->info("adding edges...:{}", (e)->length());
     }
     average_edge_length /= edges.size;
     auto up_lim   = average_edge_length * 4.0f / 3;
@@ -511,13 +533,16 @@ void HalfedgeMesh::isotropic_remesh()
         for (auto pe = selected_edges.begin(); pe != selected_edges.end(); ++pe) {
             // 分开长边
             auto& e = (*pe);
-            if ((e->length() > up_lim)) {
+            if (erased_edges.find(e->id) != erased_edges.end()) {
+                logger->debug("e erased, not collapse");
+                selected_edges.erase(pe++);
+            } else if ((e->length() > up_lim)) {
                 auto vn = split_edge(e).value();
+                // 将新增的四个边也加入被选中的边中（因为它们很可能过短，需要坍缩
                 auto e1 = vn->halfedge->edge;
                 auto e2 = vn->halfedge->prev->edge;
                 auto e3 = vn->halfedge->prev->inv->next->edge;
                 auto e4 = vn->halfedge->inv->next->edge;
-                // save_delete_edges.push_back(e);
                 selected_edges.erase(pe++);
                 selected_edges.insert(e1);
                 selected_edges.insert(e2);
@@ -536,18 +561,14 @@ void HalfedgeMesh::isotropic_remesh()
             if (erased_edges.find(e->id) != erased_edges.end()) {
                 logger->debug("e erased, not collapse");
                 selected_edges.erase(pe++);
-                continue;
-            }
-            auto length = e->length();
-            logger->info("length={}", length);
-            if (length >= down_lim) {
-                logger->info("not collapse");
-            }
-            if (length < down_lim) {
-                logger->info("[collapse begins]");
-                collapse_edge(*pe);
-                logger->info("[collapse ends]");
-                selected_edges.erase(pe++);
+            } else {
+                auto length = e->length();
+                if (length < down_lim) {
+                    logger->info("[collapse begins]");
+                    collapse_edge(e);
+                    logger->info("[collapse ends]");
+                    selected_edges.erase(pe++);
+                }
             }
         }
         logger->info("...collapses ends...");
@@ -558,26 +579,37 @@ void HalfedgeMesh::isotropic_remesh()
         // 翻转边
         logger->info("...reverse begins...");
         for (auto e = edges.head; e != nullptr; e = e->next_node) {
-            auto v1 = e->halfedge->from;
-            auto v2 = e->halfedge->inv->from;
-            auto v3 = e->halfedge->next->from;
-            auto v4 = e->halfedge->inv->next->from;
-            if (std::abs(v1->degree() - 6.0f) + std::abs(v2->degree() - 6.0f) +
-                    std::abs(v3->degree() - 6.0f) + std::abs(v4->degree() - 6.0f) >
-                std::abs(v1->degree() - 7.0f) + std::abs(v2->degree() - 7.0f) +
-                    std::abs(v3->degree() - 5.0f) + std::abs(v4->degree() - 5.0f)) {
+            auto v1  = e->halfedge->from;
+            auto v2  = e->halfedge->inv->from;
+            auto v3  = e->halfedge->next->from;
+            auto v4  = e->halfedge->inv->next->from;
+            auto v1d = v1->degree();
+            auto v2d = v2->degree();
+            auto v3d = v3->degree();
+            auto v4d = v4->degree();
+            using std::abs;
+            if (abs(v1d - 6.0f) + abs(v2d - 6.0f) + abs(v3d - 6.0f) + abs(v4d - 6.0f) >
+                abs(v1d - 7.0f) + abs(v2d - 7.0f) + abs(v3d - 5.0f) + abs(v4d - 5.0f)) {
+                logger->info("[flip begins]");
                 flip_edge(e);
+                logger->info("[flip ends]");
             }
         }
         logger->info("...reverse ends...");
         logger->info("...average begins...");
         for (auto v = vertices.head; v != nullptr; v = v->next_node) {
             // 将节点平均化
+            // auto p     = v->pos;
+            // auto c     = v->neighborhood_center();
+            // auto N     = c - p;
+            // v->new_pos = p + (c - p)(Vector3f() - N) * 0.2f;
         }
         logger->info("......average ends......");
+        logger->info("---validate begins---");
         validate();
+        logger->info("---validate ends---");
     }
     logger->info("remeshed mesh: {} vertices, {} faces\n", vertices.size, faces.size);
     global_inconsistent = true;
-    // validate();
+    validate();
 }

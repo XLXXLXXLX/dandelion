@@ -1,4 +1,3 @@
-#include "Eigen/src/Core/Matrix.h"
 #include "halfedge.h"
 
 #include <cstddef>
@@ -518,7 +517,7 @@ void HalfedgeMesh::isotropic_remesh()
     // - 将比目标长度短得多的边坍缩掉。这里循环需要非常小心，因为许多边可能已经被摧毁掉了
     // - 翻转每个会增加结点度数的边
     // - 最后对节点位置作优化
-    static const size_t iteration_limit = 1;
+    static const size_t iteration_limit = 5;
     set<Edge*> selected_edges;
     double average_edge_length = 0;
     for (auto e = edges.head; e != nullptr; e = e->next_node) {
@@ -561,14 +560,34 @@ void HalfedgeMesh::isotropic_remesh()
             if (erased_edges.find(e->id) != erased_edges.end()) {
                 logger->debug("e erased, not collapse");
                 selected_edges.erase(pe++);
-            } else {
-                auto length = e->length();
-                if (length < down_lim) {
+            } else if (e->length() < down_lim) {
+                bool collapsable = true;
+                auto h12         = e->halfedge;
+                auto hfromv1     = h12->inv->next;
+                auto hfromv2     = h12->inv;
+                auto ecenter     = e->center();
+                do {
+                    hfromv1 = hfromv1->inv->next;
+                    auto v_ = hfromv1->inv->from;
+                    if ((v_->pos - ecenter).norm() > up_lim) {
+                        collapsable = false;
+                    }
+                } while (hfromv1 != h12->prev->inv);
+                do {
+                    hfromv2 = hfromv2->inv->next;
+                    auto v_ = hfromv2->inv->from;
+                    if ((v_->pos - ecenter).norm() > up_lim) {
+                        collapsable = false;
+                    }
+                } while (hfromv1 != h12->prev->inv);
+                if (collapsable) {
                     logger->info("[collapse begins]");
                     collapse_edge(e);
                     logger->info("[collapse ends]");
-                    selected_edges.erase(pe++);
+                } else {
+                    logger->info("[collapse not needed]");
                 }
+                selected_edges.erase(pe++);
             }
         }
         logger->info("...collapses ends...");
@@ -599,10 +618,16 @@ void HalfedgeMesh::isotropic_remesh()
         logger->info("...average begins...");
         for (auto v = vertices.head; v != nullptr; v = v->next_node) {
             // 将节点平均化
-            // auto p     = v->pos;
-            // auto c     = v->neighborhood_center();
-            // auto N     = c - p;
-            // v->new_pos = p + (c - p)(Vector3f() - N) * 0.2f;
+            using Eigen::RowVector3f;
+            using Eigen::Vector3f;
+            Vector3f p = v->pos;
+            Vector3f c = v->neighborhood_center();
+            Vector3f N = v->normal();
+            Vector3f V = c - p;
+            v->new_pos = p + (V - (N * V.transpose()) * N) / 5;
+        }
+        for (auto v = vertices.head; v != nullptr; v = v->next_node) {
+            v->pos = v->new_pos;
         }
         logger->info("......average ends......");
         logger->info("---validate begins---");

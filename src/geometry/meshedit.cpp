@@ -568,9 +568,30 @@ void HalfedgeMesh::isotropic_remesh()
             }
         }
         logger->info("...splits ends...");
-        // logger->info("---validate begins---");
-        // validate();
-        // logger->info("---validate ends---");
+        // 翻转边
+        logger->info("...reverse begins...");
+        for (auto e = edges.head; e != nullptr; e = e->next_node) {
+            auto v1  = e->halfedge->from;
+            auto v2  = e->halfedge->inv->from;
+            auto v3  = e->halfedge->prev->from;
+            auto v4  = e->halfedge->inv->prev->from;
+            auto v1d = v1->degree();
+            auto v2d = v2->degree();
+            auto v3d = v3->degree();
+            auto v4d = v4->degree();
+            logger->trace("v1d:{} v2d:{} v3d:{} v4d:{}", v1d, v2d, v3d, v4d);
+            auto d0 = std::abs((int)(v1d - 6)) + std::abs((int)(v2d - 6)) +
+                      std::abs((int)(v3d - 6)) + std::abs((int)(v4d - 6));
+            auto d1 = std::abs((int)(v1d - 7)) + std::abs((int)(v2d - 7)) +
+                      std::abs((int)(v3d - 5)) + std::abs((int)(v4d - 5));
+            logger->trace("d0:{}  d1:{}", d0, d1);
+            if (d0 > d1) {
+                logger->info("[flip begins]");
+                flip_edge(e);
+                logger->info("[flip ends]");
+            }
+        }
+        logger->info("...reverse ends...");
         if (true) {
             logger->info("...collapses begins...");
             for (auto pe = selected_edges.begin(); pe != selected_edges.end(); ++pe) {
@@ -612,35 +633,6 @@ void HalfedgeMesh::isotropic_remesh()
             }
             logger->info("...collapses ends...");
         }
-        // selected_edges.clear();
-        // for(auto e = edges.head; e != nullptr; e = e->next_node){selected_edges.insert(e);}
-        // logger->info("---validate begins---");
-        // validate();
-        // logger->info("---validate ends---");
-
-        // 翻转边
-        logger->info("...reverse begins...");
-        for (auto e = edges.head; e != nullptr; e = e->next_node) {
-            auto v1  = e->halfedge->from;
-            auto v2  = e->halfedge->inv->from;
-            auto v3  = e->halfedge->next->from;
-            auto v4  = e->halfedge->inv->next->from;
-            auto v1d = v1->degree();
-            auto v2d = v2->degree();
-            auto v3d = v3->degree();
-            auto v4d = v4->degree();
-            auto d0  = std::abs((int)(v1d - 6)) + std::abs((int)(v2d - 6)) +
-                      std::abs((int)(v3d - 6)) + std::abs((int)(v4d - 6));
-            auto d1 = std::abs((int)(v1d - 7)) + std::abs((int)(v2d - 7)) +
-                      std::abs((int)(v3d - 5)) + std::abs((int)(v4d - 5));
-            // logger->info("d0:{}  d1:{}", d0, d1);
-            if (d0 > d1) {
-                logger->info("[flip begins]");
-                flip_edge(e);
-                logger->info("[flip ends]");
-            }
-        }
-        logger->info("...reverse ends...");
         logger->info("...average begins...");
         for (auto v = vertices.head; v != nullptr; v = v->next_node) {
             // 将节点平均化
@@ -655,15 +647,12 @@ void HalfedgeMesh::isotropic_remesh()
             v->new_pos = p + w * V;
         }
         for (auto v = vertices.head; v != nullptr; v = v->next_node) {
-            logger->info(
+            logger->trace(
                 "=========v:{}          pos:{} {} {}      new_pos:{} {} {}=========", v->id,
                 v->pos.x(), v->pos.y(), v->pos.z(), v->new_pos.x(), v->new_pos.y(), v->new_pos.z());
             v->pos = v->new_pos;
         }
         logger->info("...average ends...");
-        // logger->info("---validate begins---");
-        // validate();
-        // logger->info("---validate ends---");
     }
     logger->info("remeshed mesh: {} vertices, {} faces\n", vertices.size, faces.size);
     global_inconsistent = true;

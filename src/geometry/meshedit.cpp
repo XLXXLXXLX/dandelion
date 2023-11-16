@@ -73,6 +73,15 @@ optional<Edge*> HalfedgeMesh::flip_edge(Edge* e)
     // 要用到的面片
     Face* f1 = h12->face;
     Face* f2 = h21->face;
+    // 插入一种特殊情况：如果删去的边是一个三角锥的底边，
+    // 则会产生一个三角形片，它由两个重合的三角形面片构成
+    // 遇到这种情况，放弃坍缩该边
+    auto v1d = v1->degree();
+    auto v2d = v2->degree();
+    if (v1d == 3 || v2d == 3) {
+        logger->trace("三角锥的底边，不能坍缩");
+        return optional<Edge*>{};
+    }
 
     auto fn1 = new_face(f1->is_boundary || f2->is_boundary);
     auto fn2 = new_face(f1->is_boundary || f2->is_boundary);
@@ -117,6 +126,7 @@ optional<Vertex*> HalfedgeMesh::split_edge(Edge* e)
     e2n->is_new   = false;
     e1n->halfedge = hn1;
     e2n->halfedge = hn2;
+
     if (h21->is_boundary()) {
         logger->debug("flip boundary");
         // 如果h21在边上，那么h21->face即为虚假面
@@ -241,7 +251,7 @@ optional<Vertex*> HalfedgeMesh::collapse_edge(Edge* e)
     auto v3d = v3->degree();
     auto v4d = v4->degree();
     if (v3d == 3 || v4d == 3) {
-        logger->info("三角锥的底边，不能坍缩");
+        logger->trace("三角锥的底边，不能坍缩");
         return optional<Vertex*>{};
     }
 
@@ -521,13 +531,8 @@ void HalfedgeMesh::isotropic_remesh()
     //    been destroyed by a collapse (which ones?)
     // -> Now flip each edge if it improves vertex degree
     // -> Finally, apply some tangential smoothing to the vertex positions
-    // 计算平均边长
-    // 重复以下步骤5～6次
-    // - 将比目标长度长得多的边分开（写循环时要注意
-    // - 将比目标长度短得多的边坍缩掉。这里循环需要非常小心，因为许多边可能已经被摧毁掉了
-    // - 翻转每个会增加结点度数的边
-    // - 最后对节点位置作优化
-    static const size_t iteration_limit = 5;
+
+    static const size_t iteration_limit = 1;
     set<Edge*> selected_edges;
     double average_edge_length = 0;
     for (auto e = edges.head; e != nullptr; e = e->next_node) {
@@ -538,7 +543,7 @@ void HalfedgeMesh::isotropic_remesh()
     auto up_lim   = average_edge_length * 4.0f / 3;
     auto down_lim = average_edge_length * 4.0f / 5;
     for (size_t i = 0; i != iteration_limit; ++i) {
-        logger->info("Iteration {}", i + 1);
+        logger->info("###Iteration {}###", i + 1);
         logger->info("...splits begins...");
         // int count = 0;
         for (auto pe = selected_edges.begin(); pe != selected_edges.end(); ++pe) {
@@ -586,9 +591,11 @@ void HalfedgeMesh::isotropic_remesh()
                       std::abs((int)(v3d - 5)) + std::abs((int)(v4d - 5));
             logger->trace("d0:{}  d1:{}", d0, d1);
             if (d0 > d1) {
-                logger->info("[flip begins]");
-                flip_edge(e);
-                logger->info("[flip ends]");
+                logger->trace("[flip begins]");
+                if (!flip_edge(e)) {
+                    logger->trace("[not flip]");
+                }
+                logger->trace("[flip ends]");
             }
         }
         logger->info("...reverse ends...");
@@ -620,13 +627,13 @@ void HalfedgeMesh::isotropic_remesh()
                         }
                     } while (hfromv1 != h12->prev->inv);
                     if (collapsable) {
-                        logger->info("[collapse begins]");
+                        logger->trace("[collapse begins]");
                         if (!collapse_edge(*pe).has_value()) {
-                            logger->info("[collapse failed]");
+                            logger->trace("[collapse failed]");
                         }
-                        logger->info("[collapse ends]");
+                        logger->trace("[collapse ends]");
                     } else {
-                        logger->info("[collapse not needed]");
+                        logger->trace("[collapse not needed]");
                     }
                     selected_edges.erase(pe++);
                 }
@@ -636,15 +643,14 @@ void HalfedgeMesh::isotropic_remesh()
         logger->info("...average begins...");
         for (auto v = vertices.head; v != nullptr; v = v->next_node) {
             // 将节点平均化
-            using Eigen::RowVector3f;
             using Eigen::Vector3f;
-            Vector3f p = v->pos;
-            Vector3f c = v->neighborhood_center();
-            Vector3f N = v->normal();
-            Vector3f V = c - p;
-            V          = V - (N * V.transpose()) * N;
-            float w    = 1.0f / 5;
-            v->new_pos = p + w * V;
+            Vector3f p  = v->pos;
+            Vector3f c  = v->neighborhood_center();
+            Vector3f N  = v->normal();
+            Vector3f V  = c - p;
+            Vector3f V_ = V - (N.dot(V)) * N;
+            float w     = 1.0f / 5;
+            v->new_pos  = p + w * V_;
         }
         for (auto v = vertices.head; v != nullptr; v = v->next_node) {
             logger->trace(
